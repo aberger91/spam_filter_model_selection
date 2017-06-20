@@ -20,7 +20,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn import svm
-from statsmodels.api import Logit
 from sklearn.metrics import (
                             confusion_matrix, 
                             classification_report, 
@@ -113,7 +112,7 @@ class Models:
         model = LogisticRegression()
         return model
 
-    def support_vector_spam_filter(threshold=0.5):
+    def support_vector_spam_filter():
         model = svm.SVC()
         return model
 
@@ -150,7 +149,6 @@ class ModelComparison(Preprocessing):
 
 
 if __name__ == '__main__':
-    from spam_feature_labels import features
-
-    models = ModelComparison('spambase.data', features, 'is_spam')
-    models.execute()
+    from feature_labels import features
+    model_comparison = ModelComparison('spambase.data', features, 'is_spam')
+    model_comparison.execute()
