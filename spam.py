@@ -152,5 +152,5 @@ class ModelComparison(Preprocessing):
 if __name__ == '__main__':
     from spam_feature_labels import features
 
-    models = ModelComparison('../data/spambase.data', features, 'is_spam')
+    models = ModelComparison('spambase.data', features, 'is_spam')
     models.execute()
