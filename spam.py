@@ -16,6 +16,7 @@ from sklearn.metrics import (
                             accuracy_score,
                             mean_squared_error
                             ) 
+from sklearn.model_selection import cross_val_score
 from explore import ExploratoryDataAnalysis
 from preprocessing import Preprocessing
 from models import Models
@@ -28,6 +29,10 @@ class ModelComparison(Preprocessing):
                accuracy_score, 
                mean_squared_error
                )
+
+    def __init__(self, path_to_data, features, target, sep=','):
+        super().__init__(path_to_data, features, target, sep=sep)
+        self.cross_validation_scores = {}
 
     def get_predictions(self, model, output_as_probability=False, threshold=0.5):
         X_train, X_test, Y_train, Y_test = self.get_standardized_training_test_split()
@@ -46,13 +51,20 @@ class ModelComparison(Preprocessing):
             print('=' * 56)
 
             fitted_model, y_true, y_hats = self.get_predictions(model())
+
             for metric in self.metrics:
                 result = metric(y_true, y_hats)
+
                 if isinstance(result, float):
                     print(' %s %s: %0.4f ' % (name, metric.__name__.upper(), result))
                 else:
                     print(' %s %s ' % (name, metric.__name__.upper()))
                     print(result)
+
+                #cv_scores = cross_val_score(model(), X_train, Y_train)
+                #print("cross validation results\n%s" % mean(cv_scores))
+                #self.cross_validation_scores[name] = cv_scores
+
             print('*' * 56)
 
 
