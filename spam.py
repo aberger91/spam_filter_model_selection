@@ -70,17 +70,39 @@ class ExploratoryDataAnalysis(Preprocessing):
         '''
         pass
 
-    def pca_decomposition(self):
+    def pca_decomposition(self, n_components=5):
         '''
         dimension reduction : find inputs that affect variance the most
         '''
-        pass
+        from sklearn.decomposition import PCA
+        import matplotlib.pyplot as plt
+
+        scaler = StandardScaler()
+        scaler.fit(self.xs)
+        _xs = scaler.transform(self.xs)
+
+        pca = PCA(n_components=n_components)
+        fit = pca.fit(_xs)
+
+        components = fit.components_
+        var = fit.explained_variance_ratio_
+        return components, var
 
     def plot(self):
         '''
         create plot based on important features
         '''
-        pass
+        components, var = self.pca_decomposition()
+        n_components = len(components)
+        ax = plt.figure().add_subplot(111)
+        ax.scatter([_ for _ in range(n_components)], var, 
+                   label='total explained variance: %0.2f%%\n \
+                          n_components: %d' % (100*sum(var), n_components))
+        ax.set_title('PCA Analysis')
+        ax.set_xlabel('components')
+        ax.set_ylabel('explained variance')
+        ax.legend()
+        plt.show()
 
     
 class Models:
@@ -143,12 +165,21 @@ class ModelComparison(Preprocessing):
 
             fitted_model, y_true, y_hats = self.get_predictions(model())
             for metric in self.metrics:
-                print(' %s %s ' % (name, metric.__name__.upper()))
-                print(metric(y_true, y_hats))
+                result = metric(y_true, y_hats)
+                if isinstance(result, float):
+                    print(' %s %s: %0.4f ' % (name, metric.__name__.upper(), result))
+                else:
+                    print(' %s %s ' % (name, metric.__name__.upper()))
+                    print(result)
             print('*' * 56)
 
 
 if __name__ == '__main__':
     from feature_labels import features
-    model_comparison = ModelComparison('spambase.data', features, 'is_spam')
+    args = ['spambase.data', features, 'is_spam']
+
+    #explore = ExploratoryDataAnalysis(*args)
+    #explore.pca_decomposition()
+
+    model_comparison = ModelComparison(*args)
     model_comparison.execute()
