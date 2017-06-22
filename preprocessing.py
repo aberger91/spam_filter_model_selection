@@ -1,26 +1,27 @@
-from pandas import read_csv
 from statsmodels.api import add_constant
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
 class Preprocessing():
-    def __init__(self, path_to_data, features, target, sep=','):
-        '''
-        path_to_data -> str
-        features -> list (input labels)
-        target -> str (response label)
-        sep -> char (delimiter)
-        '''
-        self.xs = read_csv(path_to_data, names=features, sep=sep)
-        self.ys = self.xs.pop(target)
+    '''
+    handles missing values and stores basic information about features
+    '''
+    def __init__(self, 
+                 data,    # type: pd.DataFrame
+                 ):
+        self.xs = getattr(data, 'xs')
+        self.ys = getattr(data, 'ys')
         self._initial()
 
     def _initial(self):
         '''
+        remove missing values, print dimensions and features
         '''
         self.xs = self.xs.dropna()
         self.ys = self.ys.dropna()
-        print('Dimensions of X: [%d, %d]' % (len(self.xs), len(self.xs.ix[0])))
+        print('Dimensions of X: [%d, %d]' % (
+              len(self.xs), len(self.xs.ix[0]))
+              )
         print('Features\n%s' % self.xs.columns)
         print('Target\n%s' % self.ys.name)
         
