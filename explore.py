@@ -1,8 +1,10 @@
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+from preprocessing import Preprocessing
 
 
 class ExploratoryDataAnalysis(Preprocessing):
+
     def summary(self):
         '''
         describe features
@@ -30,10 +32,12 @@ class ExploratoryDataAnalysis(Preprocessing):
         '''
         components, var = self.pca_decomposition()
         n_components = len(components)
+
         ax = plt.figure().add_subplot(111)
         ax.scatter([_ for _ in range(n_components)], var, 
                    label='total explained variance: %0.2f%%\n \
                           n_components: %d' % (100*sum(var), n_components))
+
         ax.set_title('PCA Analysis')
         ax.set_xlabel('components')
         ax.set_ylabel('explained variance')

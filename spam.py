@@ -4,7 +4,6 @@
   - logistic regression
   - naive bayesian classifiers
   - multilayer perceptron neural network
-
 *References*:
   - https://archive.ics.uci.edu/ml/datasets/Spambase
   - Mark Hopkins, Erik Reeber, George Forman, Jaap Suermondt
@@ -20,9 +19,12 @@ from sklearn.model_selection import cross_val_score
 from explore import ExploratoryDataAnalysis
 from preprocessing import Preprocessing
 from models import Models
+import numpy as np
 
 
 class ModelComparison(Preprocessing):
+    '''
+    '''
     metrics = (
                confusion_matrix, 
                classification_report, 
@@ -30,27 +32,47 @@ class ModelComparison(Preprocessing):
                mean_squared_error
                )
 
-    def __init__(self, path_to_data, features, target, sep=','):
+    def __init__(self, 
+                 path_to_data,  # type: str
+                 features,      # type: List[str]
+                 target,        # type: str
+                 sep=','
+                 ):
+        '''
+        cross_validation_scores -> Dict[str]: List[float]
+        '''
         super().__init__(path_to_data, features, target, sep=sep)
         self.cross_validation_scores = {}
 
-    def get_predictions(self, model, output_as_probability=False, threshold=0.5):
+    def get_predictions(self, 
+                        model, 
+                        output_as_probability=False, 
+                        threshold=0.5):
+        '''
+        train a model and gather prediction results
+        model -> sklearn model object
+        output_as_probability -> boolean
+        threshold -> float
+        '''
         X_train, X_test, Y_train, Y_test = self.get_standardized_training_test_split()
         fit = model.fit(X_train, Y_train)
         if output_as_probability:
             predictions = [1 if x > threshold else 0 for x in fit.predict(X_test)]
         else:
             predictions = model.predict(X_test)
-        return (fit, Y_test, predictions)
+        return (X_train, Y_train, fit, Y_test, predictions)
 
     def execute(self):
+        '''
+        populate self.cross_validation_scores and display model results
+        '''
         for model in Models.get_models():
             print('=' * 56)
             name = model.__name__
             print('%s model summary' % name.upper())
             print('=' * 56)
 
-            fitted_model, y_true, y_hats = self.get_predictions(model())
+            x_train, y_train, fitted_model, y_true, y_hats = self.get_predictions(model())
 
             for metric in self.metrics:
                 result = metric(y_true, y_hats)
@@ -61,9 +83,9 @@ class ModelComparison(Preprocessing):
                     print(' %s %s ' % (name, metric.__name__.upper()))
                     print(result)
 
-                #cv_scores = cross_val_score(model(), X_train, Y_train)
-                #print("cross validation results\n%s" % mean(cv_scores))
-                #self.cross_validation_scores[name] = cv_scores
+            cv_scores = cross_val_score(model(), x_train, y_train, cv=10, scoring='accuracy')
+            print("CROSS VALIDATION RESULTS\n%s" % np.mean(cv_scores))
+            self.cross_validation_scores[name] = cv_scores
 
             print('*' * 56)
 

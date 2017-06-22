@@ -12,9 +12,18 @@ class Preprocessing():
         sep -> char (delimiter)
         '''
         self.xs = read_csv(path_to_data, names=features, sep=sep)
-        #self.xs = self.xs.dropna()
         self.ys = self.xs.pop(target)
+        self._initial()
 
+    def _initial(self):
+        '''
+        '''
+        self.xs = self.xs.dropna()
+        self.ys = self.ys.dropna()
+        print('Dimensions of X: [%d, %d]' % (len(self.xs), len(self.xs.ix[0])))
+        print('Features\n%s' % self.xs.columns)
+        print('Target\n%s' % self.ys.name)
+        
     def get_standardized_training_test_split(self, test_size=0.4):
         '''
         split samples into training / testing sets on a unit scale
