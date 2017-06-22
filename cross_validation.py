@@ -24,10 +24,10 @@ class MLModelComparison(Preprocessing):
                  models=['all']
                  ):
         '''
-        cross_validation_scores -> Dict[str]: List[float]
+        scores -> Dict[str]: List[float]
         '''
         super().__init__(data)
-        self._models = Models.get_models(models=models)
+        self._models = Models.get(models=models)
         self.scores = {}
 
     @property

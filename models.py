@@ -10,7 +10,7 @@ class Models:
     static wrapper over scikit-learn objects
     keyward arguments to be tweaked manually or optimized 
     '''
-    def get_models(models=['all']):
+    def get(models=['all']):
         _models = [Models.__dict__[m] for m in Models.__dict__.keys() \
                       if "_spam_filter" in m
                       ]
