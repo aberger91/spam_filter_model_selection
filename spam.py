@@ -12,10 +12,14 @@
 import matplotlib.pyplot as plt
 from pandas import read_csv, DataFrame
 from cross_validation import MLModelComparison
+from explore import ExploratoryDataAnalysis
 from feature_labels import features
 import seaborn
 
-class SpamBaseData():
+
+class SpamBaseData:
+    '''
+    '''
     def __init__(self, 
                  path_to_data,  # type: str
                  features,      # type: List[str]
@@ -32,6 +36,10 @@ def main():
     data = SpamBaseData('data/spambase.data', 
                          features, 
                          'is_spam')
+
+    explore = ExploratoryDataAnalysis(data)
+    explore.plot()
+
     cross_val = MLModelComparison(data, models=['all'])
     results = cross_val.execute(cv=3)  # type : Dict[str] -> Dict[List[float]]]
 
